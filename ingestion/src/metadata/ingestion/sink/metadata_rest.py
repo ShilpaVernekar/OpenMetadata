@@ -151,7 +151,7 @@ class MetadataRestSink(Sink):
                 description=table_and_db.table.description,
                 database=db.id,
             )
-
+            print(table_request)
             if (
                 table_and_db.table.viewDefinition is not None
                 and table_and_db.table.viewDefinition != ""

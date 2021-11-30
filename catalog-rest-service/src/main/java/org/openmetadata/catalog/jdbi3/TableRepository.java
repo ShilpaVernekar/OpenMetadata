@@ -261,7 +261,9 @@ public class TableRepository extends EntityRepository<Table> {
 
   @Override
   public void prepare(Table table) throws IOException {
-    table.setDatabase(dao.databaseDAO().findEntityReferenceById(table.getDatabase().getId()));
+    EntityReference database = dao.databaseDAO().findEntityReferenceById(table.getDatabase().getId());
+    table.setDatabase(database);
+    table.setDatabaseService(getDatabaseService(database.getId()));
 
     // Set data in table entity based on database relationship
     table.setFullyQualifiedName(getFQN(table));
@@ -369,6 +371,12 @@ public class TableRepository extends EntityRepository<Table> {
       throw EntityNotFoundException.byMessage(String.format("Database for table %s Not found", tableId));
     }
     return dao.databaseDAO().findEntityReferenceById(UUID.fromString(result.get(0)));
+  }
+
+  private EntityReference getDatabaseService(UUID databaseId) throws IOException {
+    // Find database for the table
+    return EntityUtil.getService(dao.relationshipDAO(), databaseId,
+        Entity.DATABASE_SERVICE);
   }
 
   private EntityReference getLocation(UUID tableId) throws IOException {
